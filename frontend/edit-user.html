@@ -1,0 +1,119 @@
+<html>
+<head>
+    <title>Admin panel</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<div class="login-page">
+    <div class="form">
+        <form class="login-form" id="register-form">
+            <input type="text" placeholder="username" id="username" minlength="6"/>
+            <input type="email" placeholder="email" id="email" minlength="5"/>
+            <input type="text" placeholder="firstname" id="firstname" minlength="2" maxlength="40"/>
+            <input type="text" placeholder="lastname" id="lastname" minlength="2" maxlength="40"/>
+            <label for="cars">Choose a role:</label>
+            <select name="roles" id="role">
+            </select>
+            <button id="edit">Edit</button>
+        </form>
+    </div>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous">
+    </script>
+    <script src="js/script.js"></script>
+<script>
+    // $('.message a').click(function(){
+    //     $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+    // });
+    $("#register-form").submit(function(e) {
+        e.preventDefault();
+    });
+    $(document).ready(function(){
+        var id = getUrlParameter("id");
+        $.ajax
+            ({
+                url: 'http://95.179.211.162:4000/api/v1/role/all',
+                type: "GET",
+                crossDomain: true,
+                xhrFields: { withCredentials: true },
+                success:function(serverData)
+                {
+                    for (var i = 0; i < serverData["roles"].length; i++) {
+                        var id = serverData["roles"][i].ID;
+                        var name  = serverData["roles"][i].Name;
+                        $('#role').append('<option value='+id+'>'+name+'</option>')
+                    }
+                },
+                error: function(e)
+                {
+                    alert("Error");
+                }
+            });
+        $.ajax
+            ({
+                url: 'http://95.179.211.162:4000/api/v1/profile/get/'+id,
+                type: "GET",
+                crossDomain: true,
+                xhrFields: { withCredentials: true },
+                success:function(serverData)
+                {
+                    user = serverData.user
+                    $('#username').val(user.Username)
+                    $('#email').val(user.Email)
+                    $('#firstname').val(user.Firstname)
+                    $('#lastname').val(user.Lastname)
+                },
+                error: function(e)
+                {
+                    alert("Error");
+                }
+            });
+        $('#edit').click(function () {
+            if($("#username").val().length <=5 || $("#username").val().length>=31){
+                alert("Length of login should be more than 5 and less than 31");
+                return
+            }
+            if($("#email").val().length<=5){
+                alert("Length of email should be more than 5");
+                return
+            }
+            if($("#firstname").val().length <= 1 || $("#firstname").val().length >= 41){
+                alert("Length of firstname should be more than 1 and less than 41");
+                return
+            }
+            if($("#lastname").val().length <= 1 || $("#lastname").val().length >= 41){
+                alert("Length of lastname should be more than 1 and less than 41");
+                return
+            }
+            $.ajax
+            ({
+                url: 'http://95.179.211.162:4000/api/v1/profile/change/'+id,
+                type: "POST",
+                contentType: "application/json",
+                xhrFields: { withCredentials: true },
+                data: JSON.stringify({
+                    "username": $("#username").val(),
+                    "email": $("#email").val(),
+                    "firstname": $("#firstname").val(),
+                    "lastname": $("#lastname").val(),
+                    "role": $("#role").val()
+                }),
+                success:function(serverData)
+                {
+                    window.location.replace("list-users.html");
+                },
+                error: function(e)
+                {
+                    window.location.replace("error.html");
+                }
+            });
+        });
+        
+    });
+</script>
+</body>
+</html>

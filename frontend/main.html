@@ -1,0 +1,40 @@
+<html>
+<head>
+    <title>AITU Disk</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="login-page">
+    <div class="form">
+        <p><a href="register-user.html">Register user</a></p>
+        <p><a href="list-users.html">List all users</a></p>
+        <p><a href="register-category.html">Register category</a></p>
+        <p><a href="list-tasks.html">List all tasks</a></p>
+    </div>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous">
+    </script>
+<script>
+    $.ajax
+        ({
+            url: 'http://95.179.211.162:4000/api/v1/auth/check',
+            type: "GET",
+            crossDomain: true,
+            xhrFields: { withCredentials: true },
+            success:function(serverData)
+            {
+                
+            },
+            error: function(e)
+            {
+                window.location.replace("index.html");
+            }
+        });
+</script>
+<style>
+</style>
+</body>
+</html>

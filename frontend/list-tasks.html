@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Table V04</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+
+	<div class="limiter">
+		
+		<div class="container-table100">
+			
+			<div class="wrap-table100">
+				
+				<div class="table100 ver3 m-b-110">
+					
+					<div class="table100-head">
+						<table>
+							<thead>
+								<tr class="row100 head">
+                                    <th class="cell100 column4">ID</th>
+                                    <th class="cell100 column2">Title</th>
+                                    <th class="cell100 column2">Text</th>
+									<th class="cell100 column2">Category</th>
+									<th class="cell100 column2">Author</th>
+									<th class="cell100 column2">Status</th>
+									<th class="cell100 column2">ExpTime</th>
+                                    <th class="cell100 column2">Edit</th>
+                                    <th class="cell100 column2">Delete</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+
+					<div class="table100-body js-pscroll">
+						<table id="table">
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
+                </div>
+                <div id="pagectrl">
+
+                </div>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="js/script.js"></script>
+	<script>
+		$(document).ready(function(){
+                var page = getUrlParameter("page");
+                if (page == null) {
+                    page = 1
+                }
+                if (page==1){
+                    $("#pagectrl").append("<a href='list-tasks.html?page="+(page+1)+"'>Next page</a>")
+                } else if(page>1){
+                    $("#pagectrl").append("<a href='list-tasks.html?page="+(page-1)+"'>Prev page</a><a href='list-tasks.html?page="+(page+1)+"'>Next page</a>")
+                } else {
+                    window.location.replace("error.html");
+                }
+                console.log(page)
+				$.ajax
+					({
+                        url: "http://95.179.211.162:4000/api/v1/task/show?page="+page,
+						type: "GET",
+                        xhrFields: { withCredentials: true },
+						success:function(data)
+						{
+                            console.log(data.tasks)
+							var table = $("#table tbody");
+							$.each(data.tasks, function(idx, elem){
+								table.append("<tr class='row100 body'><td class='cell100 column4'>"
+                                +elem.ID+
+                                "<td class='cell100 column2'>"
+                                +elem.Title+
+                                "</td><td class='cell100 column2'>"
+                                +elem.Text+
+                                "</td><td class='cell100 column2'>"
+                                +elem.Category.Name+
+                                "</td><td class='cell100 column2'>"
+                                +elem.Author.ID+
+                                "</td><td class='cell100 column2'>"
+                                +elem.Status+
+                                "</td><td class='cell100 column2'>"
+                                +elem.ExpTime+
+                                "</td><td class='cell100 column2'><a href='edit-task.html?id="
+                                +elem.ID+
+                                "'>Edit</a></td><td class='cell100 column2'><a href='delete-task.html?id="
+                                +elem.ID+
+                                "'>Delete</a></td></tr>");
+							});
+						},
+						error: function(e)
+						{
+                            console.log(page)
+                            if (page != 1){
+                                window.location.replace("list-tasks.html");
+                            }
+						}
+					});
+			});		
+	</script>
+
+	<script src="js/main.js"></script>
+
+</body>
+</html>

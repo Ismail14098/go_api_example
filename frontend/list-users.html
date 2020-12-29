@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Table V04</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
+	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" type="text/css" href="css/util.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<body>
+
+	<div class="limiter">
+		
+		<div class="container-table100">
+			
+			<div class="wrap-table100">
+				
+				<div class="table100 ver3 m-b-110">
+					
+					<div class="table100-head">
+						<table>
+							<thead>
+								<tr class="row100 head">
+                                    <th class="cell100 column4">ID</th>
+                                    <th class="cell100 column2">Username</th>
+									<th class="cell100 column2">Firstname</th>
+									<th class="cell100 column2">Lastname</th>
+									<th class="cell100 column2">Email</th>
+									<th class="cell100 column2">Role</th>
+                                    <th class="cell100 column2">Edit</th>
+                                    <th class="cell100 column2">Delete</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+
+					<div class="table100-body js-pscroll">
+						<table id="table">
+							<tbody>
+								<!-- <tr class="row100 body">
+									<td class="cell100 column1">Book name</td>
+									<td class="cell100 column2">Author</td>
+									<td class="cell100 column3">12</td>
+									<td class="cell100 column4">kasdk123123</td>
+									<td class="cell100 column5">Edit</td>
+									<td class="cell100 column5">Delete</td>
+								</tr> -->
+							</tbody>
+						</table>
+					</div>
+				</div>
+                <div id="pagectrl">
+
+                </div>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="vendor/bootstrap/js/popper.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="vendor/select2/select2.min.js"></script>
+    <script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="js/script.js"></script>
+	<script>
+		$(document).ready(function(){
+                var page = getUrlParameter("page");
+                if (page == null) {
+                    page = 1
+                }
+                if (page==1){
+                    $("#pagectrl").append("<a href='list-users.html?page="+(page+1)+"'>Next page</a>")
+                } else if(page>1){
+                    $("#pagectrl").append("<a href='list-users.html?page="+(page-1)+"'>Prev page</a><a href='list-users.html?page="+(page+1)+"'>Next page</a>")
+                } else {
+                    window.location.replace("error.html");
+                }
+				$.ajax
+					({
+                        url: "http://95.179.211.162:4000/api/v1/profile/show?page="+page,
+						type: "GET",
+                        xhrFields: { withCredentials: true },
+						success:function(data)
+						{
+							var table = $("#table tbody");
+							$.each(data.users, function(idx, elem){
+								table.append("<tr class='row100 body'><td class='cell100 column4'>"
+                                +elem.User.ID+
+                                "<td class='cell100 column2'>"
+                                    +elem.User.Username+
+                                "</td><td class='cell100 column2'>"
+                                +elem.User.Firstname+
+                                "</td><td class='cell100 column2'>"
+                                +elem.User.Lastname+
+                                "</td><td class='cell100 column2'>"
+                                +elem.User.Email+
+                                "</td><td class='cell100 column2'>"
+                                +elem.Role.Name+
+                                "</td><td class='cell100 column2'><a href='edit-user.html?id="
+                                +elem.User.ID+
+                                "'>Edit</a></td><td class='cell100 column2'><a href='delete-user.html?id="
+                                +elem.User.ID+
+                                "'>Delete</a></td></tr>");
+							});
+						},
+						error: function(e)
+						{
+                            console.log(page)
+                            if (page != 1){
+                                // window.location.replace("list-users.html");
+                            }
+						}
+					});
+			});
+	</script>
+	<script src="js/main.js"></script>
+
+</body>
+</html>

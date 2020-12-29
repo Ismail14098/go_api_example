@@ -1,0 +1,48 @@
+version: '3.7'
+services:
+
+#  agyn-postgres:
+#    image: "postgres:9.6"
+##    container_name: agyn-postgres
+#    volumes:
+#      - agyn-data1:/var/lib/postgresql/data
+#    ports:
+#      - 5433:5432
+#    environment:
+#      - POSTGRES_DB:agyn_test_rest
+#      - POSTGRES_USER:agyn
+#      - POSTGRES_PASSWORD:agyn
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_USER=agyn
+      - POSTGRES_PASSWORD=agyn
+      - POSTGRES_DB=agyn_test_rest
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+
+  agyn-backend:
+    build: ./backend
+    container_name: agyn-backend
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+#    environment:
+#      - APP_USER=admin123
+#      - APP_PASSWORD=admin123
+#    links:
+#      - agyn-postgres
+
+  agyn-frontend:
+    build: ./frontend
+    container_name: agyn-frontend
+    ports:
+      - 8081:81
+#    links:
+#      - agyn-backend
+
+volumes:
+  postgres:

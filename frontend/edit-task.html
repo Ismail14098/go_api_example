@@ -1,0 +1,118 @@
+<html>
+<head>
+    <title>Admin panel</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<div class="login-page">
+    <div class="form">
+        <form class="login-form" id="register-form">
+            <input type="text" placeholder="title" id="title" minlength="5"/>
+            <input type="text" placeholder="text" id="text" minlength="1"/>
+            <label>Choose a status:</label>
+            <select name="statuses" id="status">
+                <option value="InProgress">В процессе</option>
+                <option value="Done">Выполнено</option>
+                <option value="Postponed">Отложено</option>
+                <option value="Declined">Отменено</option>
+                <option value="Blocked">Заблокированно</option>
+            </select>
+            <br>
+            <label>Choose a category:</label>
+            <select name="categories" id="category">
+            </select>
+            <input type="datetime-local" id="expTime"/>
+            <button id="edit">Edit</button>
+        </form>
+    </div>
+</div>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous">
+    </script>
+    <script src="js/script.js"></script>
+<script>
+    $("#register-form").submit(function(e) {
+        e.preventDefault();
+    });
+    $(document).ready(function(){
+        var id = getUrlParameter("id");
+        //Categories
+        $.ajax
+        ({
+            url: 'http://95.179.211.162:4000/api/v1/category/all',
+            type: "GET",
+            crossDomain: true,
+            xhrFields: { withCredentials: true },
+            success:function(serverData)
+            {
+                for (var i = 0; i < serverData["categories"].length; i++) {
+                    var id = serverData["categories"][i].ID;
+                    var name  = serverData["categories"][i].Name;
+                    $('#category').append('<option value='+id+'>'+name+'</option>')
+                }
+            },
+            error: function(e)
+            {
+                alert("Error");
+            }
+        });
+        $.ajax
+        ({
+            url: 'http://95.179.211.162:4000/api/v1/task/view/'+id,
+            type: "GET",
+            crossDomain: true,
+            xhrFields: { withCredentials: true },
+            success:function(serverData)
+            {
+                task = serverData.task
+                console.log(task)
+                $('#title').val(task.Title)
+                $('#text').val(task.Text)
+                $('#expTime').val(task.expTime)
+            },
+            error: function(e)
+            {
+                alert("Error");
+            }
+        });
+        $('#edit').click(function () {
+            if ($("#title").val().length <=4){
+                alert("Length of task title should be more than 4")
+                return
+            }
+            if ($("#text").val().length <=1){
+                alert("Length of task text should be more than 1")
+                return
+            }
+            $.ajax
+            ({
+                url: 'http://95.179.211.162:4000/api/v1/task/change',
+                type: "POST",
+                contentType: "application/json",
+                xhrFields: { withCredentials: true },
+                data: JSON.stringify({
+                    "id": id,
+                    "title": $("#title").val(),
+                    "text": $("#text").val(),
+                    "status": $("#status").val(),
+                    "category": $("#category").val(),
+                    "expTime": $("#expTime").val()+":00Z",
+                }),
+                success:function(serverData)
+                {
+                    window.location.replace("list-tasks.html");
+                },
+                error: function(e)
+                {
+                    alert("Internal Error or check the Date (Date and Time should be more than current date)")
+                }
+            });
+        });
+        
+    });
+</script>
+</body>
+</html>
